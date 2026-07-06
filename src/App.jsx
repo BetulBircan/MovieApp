@@ -64,6 +64,8 @@ const selected_movie_list = [
 function App() {
   const [movies,setMovies] = useState(movie_list)
   const [selectedMovies,setSelectedMovies] = useState(selected_movie_list)
+  const [isOpen, setIsOpen] = useState(true);
+  const [selectedIsOpen, setSelectedIsOpen] = useState(true);
   return (
     <>
       <nav className="bg-info text-white p-2">
@@ -84,7 +86,15 @@ function App() {
         <div className="row mt-2">
           <div className="col-md-9">
             <div className="movie-list">
-              <div className="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-4">
+              <button className="btn btn-sm btn-outline-primary mb-2" onClick={() => setIsOpen((val) => !val)}>
+                {
+                  isOpen ? (<i className="bi bi-chevron-up"></i>) : (<i className="bi bi-chevron-down"></i>)
+                }
+               
+              </button>
+            {
+              isOpen && (
+                 <div className="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-4">
                 {
                   movies.map((movie) => (
                     <div className="col mb-2" key={movie.Id}>
@@ -102,11 +112,21 @@ function App() {
                   ))
                 }
               </div>
+              )
+            }
+             
             </div>
           </div>
           <div className="col-md-3">
             <div className="movie-list">
-               {
+              <button className="btn btn-sm btn-outline-primary mb-2" onClick={() => setSelectedIsOpen((val) => !val)}>
+                {
+                  selectedIsOpen ? (<i className="bi bi-chevron-up"></i>) : (<i className="bi bi-chevron-down"></i>)
+                }
+               
+              </button>
+              {selectedIsOpen && (
+                   
                   selectedMovies.map((movie) => (
                      <div className="card mb-2" key={movie.Id}>
                       <div className="row">
@@ -131,8 +151,8 @@ function App() {
                       </div>
                     </div>  
                   ))
-                }
-             
+                
+              )}
             </div>
           </div>
         </div>
