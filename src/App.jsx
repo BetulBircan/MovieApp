@@ -67,21 +67,35 @@ export default function App() {
     const [movies, setMovies] = useState(movie_list);
   return (
     <>
-      <Navbar movies={movies} />
-      <Main movies={movies} />
+      <Navbar>
+         <Logo />
+          <Search />
+          <NavSearchResult movies={movies} />
+      </Navbar>
+      <Main>
+        {/* Movies e burada parametre geçebiliyoruz mainde bunun yerine children yazıyoruz */}
+        <MovieListContainer>
+          <MovieList movies={movies} />
+        </MovieListContainer>
+      </Main>
+
+      {/* <Main movies={movies} /> artık main e prop göndermemize gerek yok çünkü main altındaki componentleri <Main></Main> arasına yazıp Main e children propu ile gönderiyoruz. */}
     </>
   );
 }
 
-function Navbar({ movies }) {
+function Navbar({ children }) {
   return (
     <>
       <nav className="bg-info text-white p-2">
         <div className="container">
           <div className="row align-items-center">
+            {children}
+            {/*
+            Burada Logo, search componentleri kesip Nav componentine yapıştırdık. ve props olarak ciildren propunu aldık. Navbar componenti çağırıldığında children propuna Logo, Search ve NavSearchResult componentleri geçilecek. 
             <Logo />
             <Search />
-            <NavSearchResult movies={movies} />
+            <NavSearchResult movies={movies} /> */}
           </div>
         </div>
       </nav>
@@ -114,12 +128,12 @@ function NavSearchResult({ movies }) {
   );
 }
 
-function Main({ movies }) {
+function Main({ children }) {
   return (
     <main className="container">
       <div className="row mt-2">
         <div className="col-md-9">
-          <MovieListContainer movies={movies} />
+          {children}
         </div>
         <div className="col-md-3">
           <MyMovieListContainer />
@@ -129,12 +143,12 @@ function Main({ movies }) {
   );
 }
 
-function MovieListContainer( {movies}) {
+function MovieListContainer( {children}) {
   const [isOpen, setIsOpen] = useState(true);
   return (
     <div className="movie-list">
       <button
-        className="btn btn-sm btn-outline-primary mb-2"
+        className="btn btn-sm btn-outline-info mb-2"
         onClick={() => setIsOpen((val) => !val)}
       >
         {isOpen ? (
@@ -143,7 +157,7 @@ function MovieListContainer( {movies}) {
           <i className="bi bi-chevron-down"></i>
         )}
       </button>
-      {isOpen && <MovieList movies={movies} />}
+      {isOpen && children}
     </div>
   );
 }
@@ -190,7 +204,7 @@ function MyMovieListContainer() {
   return (
     <div className="movie-list">
       <button
-        className="btn btn-sm btn-outline-primary mb-2"
+        className="btn btn-sm btn-outline-info mb-2"
         onClick={() => setSelectedIsOpen((val) => !val)}
       >
         {selectedIsOpen ? (
