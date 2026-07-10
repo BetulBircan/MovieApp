@@ -65,6 +65,7 @@ const getAverage = (array) =>
 
 export default function App() {
     const [movies, setMovies] = useState(movie_list);
+    const [selectedMovies, setSelectedMovies] = useState(selected_movie_list);
   return (
     <>
       <Navbar>
@@ -74,9 +75,21 @@ export default function App() {
       </Navbar>
       <Main>
         {/* Movies e burada parametre geçebiliyoruz mainde bunun yerine children yazıyoruz */}
-        <MovieListContainer>
-          <MovieList movies={movies} />
-        </MovieListContainer>
+        <div className="row mt-2">
+        <div className="col-md-9">
+          <ListContainer>
+            <MovieList movies={movies} />
+          </ListContainer>
+        </div>
+        <div className="col-md-3">
+          <ListContainer>
+             <>
+          <MyMovieListSummary selectedMovies={selectedMovies} />
+          <MyMovieList selectedMovies={selectedMovies} />
+        </>
+          </ListContainer>
+        </div>
+      </div>
       </Main>
 
       {/* <Main movies={movies} /> artık main e prop göndermemize gerek yok çünkü main altındaki componentleri <Main></Main> arasına yazıp Main e children propu ile gönderiyoruz. */}
@@ -131,19 +144,12 @@ function NavSearchResult({ movies }) {
 function Main({ children }) {
   return (
     <main className="container">
-      <div className="row mt-2">
-        <div className="col-md-9">
-          {children}
-        </div>
-        <div className="col-md-3">
-          <MyMovieListContainer />
-        </div>
-      </div>
+      {children}
     </main>
   );
 }
 
-function MovieListContainer( {children}) {
+function ListContainer( {children}) {
   const [isOpen, setIsOpen] = useState(true);
   return (
     <div className="movie-list">
@@ -186,39 +192,6 @@ function MovieListItem({ movie }) {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function MyMovieListContainer() {
-  const [selectedMovies, setSelectedMovies] = useState(selected_movie_list);
-  const [selectedIsOpen, setSelectedIsOpen] = useState(true);
-
-  const avgRating = getAverage(
-    selected_movie_list.map((sMovie) => sMovie.Rating),
-  );
-  const avgDuration = getAverage(
-    selected_movie_list.map((sMovie) => sMovie.Duration),
-  );
-
-  return (
-    <div className="movie-list">
-      <button
-        className="btn btn-sm btn-outline-info mb-2"
-        onClick={() => setSelectedIsOpen((val) => !val)}
-      >
-        {selectedIsOpen ? (
-          <i className="bi bi-chevron-up"></i>
-        ) : (
-          <i className="bi bi-chevron-down"></i>
-        )}
-      </button>
-      {selectedIsOpen && (
-        <>
-          <MyMovieListSummary selectedMovies={selectedMovies} />
-          <MyMovieList selectedMovies={selectedMovies} />
-        </>
-      )}
     </div>
   );
 }
