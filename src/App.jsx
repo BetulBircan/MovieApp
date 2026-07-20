@@ -42,11 +42,21 @@ export default function App() {
 
     useEffect(() => {
       //First render(mount)
-      fetch(`https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${query}`)
-    .then((res) => res.json())
-    .then((data) => {
-      setMovies(data.results)
-    })
+
+      //async await ile yapma
+      const getMovies = async () => {
+        const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${query}`)
+        const data = await res.json()
+        setMovies(data.results)
+      }
+
+      getMovies()
+
+    //   fetch(`https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${query}`)
+    // .then((res) => res.json())
+    // .then((data) => {
+    //   setMovies(data.results)
+    // })
     },[])
 
     
