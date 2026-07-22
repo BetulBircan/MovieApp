@@ -31,29 +31,46 @@ const selected_movie_list = [
 ];
 
 const getAverage = (array) =>
-  array.reduce((sum, value) => sum + value, 0) / array.length;
+  array.reduce((sum, value) => sum + value  / array.length, 0);
 
 const api_key = "459e240832263aedab57605373a66db3";
 
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [selectedMovies, setSelectedMovies] = useState(selected_movie_list);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const query = "fight";
+  const query = "Father";
 
   useEffect(() => {
     //First render(mount)
 
     //async await ile yapma
     const getMovies = async () => {
-      setLoading(true)
-      const res = await fetch(
-        `https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${query}`,
-      );
-      const data = await res.json();
-      setMovies(data.results);
-      setLoading(false)
+      try {
+        setLoading(true);
+        setError("");
+        const res = await fetch(
+          `https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${query}`,
+        );
+
+        if (!res.ok) {
+          throw new Error("Bilinmeyen bir hata oluştu.");
+        }
+
+        const data = await res.json();
+
+        if (data.total_results === 0) {
+          throw new Error("Film bulunamadı.");
+        }
+
+        setMovies(data.results);
+        
+      } catch (error) {
+        setError(error.message);
+      }
+      setLoading(false);
     };
 
     getMovies();
@@ -77,7 +94,10 @@ export default function App() {
         <div className="row mt-2">
           <div className="col-md-9">
             <ListContainer>
-              { loading ? <Loading /> : <MovieList movies={movies} /> }
+              {/* {loading ? <Loading /> : <MovieList movies={movies} />} */}
+              {loading && <Loading />}
+              {!loading && !error && <MovieList movies={movies} /> }
+              {error && <ErrorMessage message={error}/>}
             </ListContainer>
           </div>
           <div className="col-md-3">
@@ -94,6 +114,10 @@ export default function App() {
       {/* <Main movies={movies} /> artık main e prop göndermemize gerek yok çünkü main altındaki componentleri <Main></Main> arasına yazıp Main e children propu ile gönderiyoruz. */}
     </>
   );
+}
+
+function ErrorMessage({ message }) {
+  return <div className="alert alert-danger">{message}</div>;
 }
 
 function Loading() {
