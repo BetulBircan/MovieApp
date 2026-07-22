@@ -40,12 +40,12 @@ export default function App() {
   const [selectedMovies, setSelectedMovies] = useState(selected_movie_list);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const query = "Father";
+  const [query, setQuery] = useState("father")
 
   useEffect(() => {
     //First render(mount)
 
+    console.log(query)
     //async await ile yapma
     const getMovies = async () => {
       try {
@@ -73,28 +73,28 @@ export default function App() {
       setLoading(false);
     };
 
+    if(query.length < 4) {
+      setMovies([]);
+      setError("");
+      return;
+    }
+
     getMovies();
 
-    //   fetch(`https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${query}`)
-    // .then((res) => res.json())
-    // .then((data) => {
-    //   setMovies(data.results)
-    // })
-  }, []);
+  }, [query]);  
 
   return (
     <>
       <Navbar>
         <Logo />
-        <Search />
+        <Search query={query} setQuery={setQuery}/>
         <NavSearchResult movies={movies} />
       </Navbar>
       <Main>
-        {/* Movies e burada parametre geçebiliyoruz mainde bunun yerine children yazıyoruz */}
         <div className="row mt-2">
           <div className="col-md-9">
             <ListContainer>
-              {/* {loading ? <Loading /> : <MovieList movies={movies} />} */}
+              
               {loading && <Loading />}
               {!loading && !error && <MovieList movies={movies} /> }
               {error && <ErrorMessage message={error}/>}
@@ -110,8 +110,6 @@ export default function App() {
           </div>
         </div>
       </Main>
-
-      {/* <Main movies={movies} /> artık main e prop göndermemize gerek yok çünkü main altındaki componentleri <Main></Main> arasına yazıp Main e children propu ile gönderiyoruz. */}
     </>
   );
 }
@@ -135,11 +133,6 @@ function Navbar({ children }) {
         <div className="container">
           <div className="row align-items-center">
             {children}
-            {/*
-            Burada Logo, search componentleri kesip Nav componentine yapıştırdık. ve props olarak ciildren propunu aldık. Navbar componenti çağırıldığında children propuna Logo, Search ve NavSearchResult componentleri geçilecek. 
-            <Logo />
-            <Search />
-            <NavSearchResult movies={movies} /> */}
           </div>
         </div>
       </nav>
@@ -156,10 +149,10 @@ function Logo() {
   );
 }
 
-function Search() {
+function Search({query, setQuery}) {
   return (
     <div className="col-4">
-      <input type="text" className="form-control" placeholder="Film ara..." />
+      <input type="text" value={query} onChange={(e)=>setQuery(e.target.value)} className="form-control" placeholder="Film ara..." />
     </div>
   );
 }
