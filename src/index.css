@@ -1,0 +1,14 @@
+.movie {
+    cursor: pointer;
+}
+
+.movie:hover {
+    border : 2px solid #0DCAF0;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.selected-movie {
+    background-color: #0DCAF0 !important;
+    color: #fff !important;
+}
+

@@ -37,10 +37,22 @@ const api_key = "459e240832263aedab57605373a66db3";
 
 export default function App() {
   const [movies, setMovies] = useState([]);
-  const [selectedMovies, setSelectedMovies] = useState(selected_movie_list);
+  const [selectedMovies, setSelectedMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("father")
+  const [selectedMovie, setSelectedMovie] = useState(null)
+
+  console.log("selectedMovie",selectedMovie);
+  
+
+  function handleSelectedMovie(id) {
+    setSelectedMovie(selectedMovie => selectedMovie === id ? null : id)
+  }
+
+  function handleUnselectedMovie() {
+    setSelectedMovie(null)
+  }
 
   useEffect(() => {
     //First render(mount)
@@ -93,10 +105,9 @@ export default function App() {
       <Main>
         <div className="row mt-2">
           <div className="col-md-9">
-            <ListContainer>
-              
+            <ListContainer> 
               {loading && <Loading />}
-              {!loading && !error && <MovieList movies={movies} /> }
+              {!loading && !error && <MovieList movies={movies} onSelectedMovie={handleSelectedMovie} selectedMovie={selectedMovie}/> }
               {error && <ErrorMessage message={error}/>}
             </ListContainer>
           </div>
@@ -105,6 +116,7 @@ export default function App() {
               <>
                 <MyMovieListSummary selectedMovies={selectedMovies} />
                 <MyMovieList selectedMovies={selectedMovies} />
+                {selectedMovie && <MovieDetails selectedMovie={selectedMovie} onUnselectMovie={handleUnselectedMovie}/>}
               </>
             </ListContainer>
           </div>
@@ -188,20 +200,29 @@ function ListContainer({ children }) {
   );
 }
 
-function MovieList({ movies }) {
+function MovieList({ movies, onSelectedMovie, selectedMovie }) {
   return (
     <div className="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-4">
       {movies.map((movie) => (
-        <MovieListItem movie={movie} key={movie.id} />
+        <MovieListItem movie={movie} key={movie.id} onSelectedMovie={onSelectedMovie} selectedMovie = {selectedMovie}/>
       ))}
     </div>
   );
 }
 
-function MovieListItem({ movie }) {
+function MovieDetails({selectedMovie, onUnselectMovie}) {
   return (
-    <div className="col mb-2" key={movie.id}>
-      <div className="card">
+    <div>
+      <p className="alert alert-primary">{selectedMovie}</p>
+      <button className="btn btn-danger" onClick={onUnselectMovie}>Kapat</button>
+    </div>
+  )
+}
+
+function MovieListItem({ movie, onSelectedMovie, selectedMovie }) {
+  return (
+    <div className="col mb-2" key={movie.id}>  
+      <div className={`card movie ${selectedMovie === movie.id ? "selected-movie" : ""}`} onClick={() => onSelectedMovie(movie.id)}>
         <img
           src={
             movie.poster_path
